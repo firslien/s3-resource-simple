@@ -16,6 +16,7 @@ resources:
 - name: <resource name>
   type: <resource type name>
   source:
+    endpoint: {{aws-endpoint}}
     access_key_id: {{aws-access-key}}
     secret_access_key: {{aws-secret-key}}
     bucket: {{aws-bucket}}

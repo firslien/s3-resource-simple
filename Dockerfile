@@ -1,5 +1,5 @@
-FROM alpine:edge
-#FROM alpine:latest
+#FROM alpine:edge
+FROM alpine:latest
 # Waiting on alpine:edge (3.11.X) to become latest to solve Openssl CVEs needing 1.1.1d-r1 or higher
 
 RUN apk update && apk upgrade

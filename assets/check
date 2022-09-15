@@ -13,6 +13,7 @@ prefix="$(echo "$payload" | jq -r '.source.path // ""')"
 AWS_ACCESS_KEY_ID=$(echo "$payload" | jq -r '.source.access_key_id // empty')
 AWS_SECRET_ACCESS_KEY=$(echo "$payload" | jq -r '.source.secret_access_key // empty')
 AWS_DEFAULT_REGION=$(echo "$payload" | jq -r '.source.region // empty')
+AWS_ENDPOINT=$(echo "$payload" | jq -r '.source.endpoint // empty')
 
 # Due to precedence rules, must be unset to support AWS IAM Roles.
 if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
@@ -24,6 +25,6 @@ fi
 [ -n "$AWS_DEFAULT_REGION" ] && export AWS_DEFAULT_REGION
 
 # Consider the most recent LastModified timestamp as the most recent version.
-timestamps=$(aws s3api list-objects --bucket $bucket --prefix "$prefix" --query 'Contents[].{LastModified: LastModified}')
+timestamps=$(aws s3api list-objects --bucket $bucket --prefix "$prefix" --query 'Contents[].{LastModified: LastModified}' --endpoint-url $AWS_ENDPOINT)
 recent="$(echo $timestamps | jq -r 'max_by(.LastModified)')"
 echo "[$recent]"
