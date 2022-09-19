@@ -20,6 +20,7 @@ bucket=$(echo "$payload" | jq -r '.source.bucket')
 #path=$(echo "$payload" | jq -r '.source.path // ""')
 #options=$(echo "$payload" | jq -r '.source.options // [] | join(" ")')
 #change_dir_to=$(echo "$payload" | jq -r '.source.change_dir_to // "." ')
+addressing_style=$(echo "$payload" | jq -r '.source.addressing_style // "path"')
 prefix=$(echo "$payload" | jq -r '.source.prefix // "" ')
 
 path=$(echo "$payload" | jq -r '.params.path // "" ')
@@ -40,6 +41,8 @@ fi
 
 # Export AWS_DEFAULT_REGION if set
 [ -n "$AWS_DEFAULT_REGION" ] && export AWS_DEFAULT_REGION
+
+aws configure set default.s3.addressing_style $addressing_style
 
 cd ${source}/${change_dir_to}
 

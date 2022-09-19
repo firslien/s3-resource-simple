@@ -8,6 +8,7 @@ set -e
 payload=`cat`
 bucket=$(echo "$payload" | jq -r '.source.bucket')
 #prefix="$(echo "$payload" | jq -r '.source.path // ""')"
+addressing_style=$(echo "$payload" | jq -r '.source.addressing_style // "path"')
 prefix="$(echo "$payload" | jq -r '.params.prefix // ""')"
 
 # export for `aws` cli
@@ -24,6 +25,8 @@ fi
 
 # Export AWS_DEFAULT_REGION if set
 [ -n "$AWS_DEFAULT_REGION" ] && export AWS_DEFAULT_REGION
+
+aws configure set default.s3.addressing_style $addressing_style
 
 # Consider the most recent LastModified timestamp as the most recent version.
 timestamps=$(aws s3api list-objects --bucket $bucket --prefix "$prefix" --query 'Contents[].{LastModified: LastModified}' --endpoint-url $AWS_ENDPOINT)
