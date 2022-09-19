@@ -7,7 +7,8 @@ set -e
 # parse incoming config data
 payload=`cat`
 bucket=$(echo "$payload" | jq -r '.source.bucket')
-prefix="$(echo "$payload" | jq -r '.source.check_prefix // ""')"
+#prefix="$(echo "$payload" | jq -r '.source.path // ""')"
+prefix="$(echo "$payload" | jq -r '.params.path // ""')"
 
 # export for `aws` cli
 AWS_ACCESS_KEY_ID=$(echo "$payload" | jq -r '.source.access_key_id // empty')

@@ -17,9 +17,14 @@ fi
 # parse incoming config data
 payload=`cat`
 bucket=$(echo "$payload" | jq -r '.source.bucket')
-path=$(echo "$payload" | jq -r '.source.path // ""')
-options=$(echo "$payload" | jq -r '.source.options // [] | join(" ")')
-change_dir_to=$(echo "$payload" | jq -r '.source.change_dir_to // "." ')
+#path=$(echo "$payload" | jq -r '.source.path // ""')
+#options=$(echo "$payload" | jq -r '.source.options // [] | join(" ")')
+#change_dir_to=$(echo "$payload" | jq -r '.source.change_dir_to // "." ')
+
+prefix=$(echo "$payload" | jq -r '.params.prefix // "" ')
+path=$(echo "$payload" | jq -r '.params.path // "" ')
+change_dir_to=$(echo "$payload" | jq -r '.params.change_dir_to // "." ')
+options=$(echo "$payload" | jq -r '.params.options // [] | join(" ")')
 
 # export for `aws` cli
 AWS_ACCESS_KEY_ID=$(echo "$payload" | jq -r '.source.access_key_id // empty')
@@ -39,7 +44,7 @@ fi
 cd ${source}/${change_dir_to}
 
 echo "Uploading to S3..."
-eval aws s3 sync . "s3://$bucket/$path" --endpoint-url $AWS_ENDPOINT $options
+eval aws s3 sync . "s3://$bucket/$prefix/$path" --endpoint-url $AWS_ENDPOINT $options
 echo "...done."
 
 source "$(dirname $0)/emit.sh" >&3
