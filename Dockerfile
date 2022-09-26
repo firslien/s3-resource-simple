@@ -7,7 +7,7 @@ RUN apk update && apk upgrade
 RUN apk del sqlite
 RUN apk add python3
 RUN apk add py3-pip
-
+RUN apk add curl
 
 # get the latest straight from the source - upstream version has known vulns
 RUN wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 \

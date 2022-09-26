@@ -22,13 +22,10 @@ bucket=$(echo "$payload" | jq -r '.source.bucket')
 addressing_style=$(echo "$payload" | jq -r '.source.addressing_style // "path"')
 prefix=$(echo "$payload" | jq -r '.source.prefix // "" ')
 url=$(echo "$payload" | jq -r '.source.access_url // "" ')
-path_suffix_build_name=$(echo "$payload" | jq -r '.source.path_suffix_build_name // "" ')
+version_file=$(echo "$payload" | jq -r '.source.version_file // "" ')
 
 # params config
 path=$(echo "$payload" | jq -r '.params.path // "" ')
-if [ $path_suffix_build_name = "true" ];then
-    path=$path.$BUILD_NAME
-fi
 change_dir_to=$(echo "$payload" | jq -r '.params.change_dir_to // "." ')
 options=$(echo "$payload" | jq -r '.params.options // [] | join(" ")')
 
@@ -50,7 +47,7 @@ fi
 aws configure set default.s3.addressing_style $addressing_style
 
 echo "Downloading from S3..."
-eval aws s3 sync "s3://$bucket/$prefix/$path" $dest --endpoint-url $AWS_ENDPOINT $options --include "ci_version"
+eval aws s3 sync "s3://$bucket/$prefix/$path" $dest --endpoint-url $AWS_ENDPOINT $options --include "${version_file}"
 echo "...done."
 
 cd ../tmp/build/get

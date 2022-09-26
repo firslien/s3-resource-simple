@@ -11,6 +11,7 @@ payload=`cat`
 bucket=$(echo "$payload" | jq -r '.source.bucket')
 addressing_style=$(echo "$payload" | jq -r '.source.addressing_style // "path"')
 prefix=$(echo "$payload" | jq -r '.source.prefix // "" ')
+version_file=$(echo "$payload" | jq -r '.source.version_file // "" ')
 
 # export for `aws` cli
 AWS_ACCESS_KEY_ID=$(echo "$payload" | jq -r '.source.access_key_id // empty')
@@ -30,6 +31,6 @@ fi
 aws configure set default.s3.addressing_style $addressing_style
 
 # Consider the most recent LastModified timestamp as the most recent version.
-files=$(aws s3api list-objects --bucket $bucket --prefix "$prefix" --query 'Contents[?contains(Key, `ci_version`)].{path: Key}' --endpoint-url $AWS_ENDPOINT)
+files=$(aws s3api list-objects --bucket $bucket --prefix "$prefix" --query 'Contents[?contains(Key, `.buildinfo`)].{path: Key}' --endpoint-url $AWS_ENDPOINT)
 
-echo $files | sed 's/\/ci_version//g'
+echo $files | sed "s/\/${version_file}//g"
